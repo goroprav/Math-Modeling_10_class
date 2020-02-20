@@ -4,39 +4,41 @@ import matplotlib.pyplot as plt
 from matplotlib.animation import FuncAnimation
 import mpl_toolkits.mplot3d.axes3d as p3
 from matplotlib import animation
+n=0.1
 
+
+R=1
 N=200
-t=np.linspace(0, 1, N)
-a=3
-b=2
-c=2
+t=np.linspace(0, 10, N)
+R=1
 g=9.81
 
-def func(s,t):
-    x,v_x,y,v_y,z,v_z = s
-    
+def difu(s,t):
+    x,v_x,y,v_y,z,v_z=s
     dxdt=v_x
-    dv_xdt=(x/a**2)* (g-(v_x**2/a**2)-(v_y**2/b**2)-(v_z**2/c**2))/((x**2/a**4)+(y**2/b**4)+(z**2/b**4))
-    
+    dv_xdt=3*g*z/(z**2+x**2)*x
     dydt=v_y
-    dv_ydt=(y/b**2)* (g-(v_x**2/a**2)-(v_y**2/b**2)-(v_z**2/c**2))/((x**2/a**4)+(y**2/b**4)+(z**2/b**4))
-    
+    dv_ydt=0
     dzdt=v_z
-    dv_zdt=-g+(x/a**2)*(g-(v_x**2/a**2)-(v_y**2/b**2)-(v_z**2/c**2))/((x**2/a**4)+(y**2/b**4)+(z**2/b**4))
-    
+    dv_zdt=-g + 3*g*z/(z**2+x**2)*z
     return dxdt,dv_xdt,dydt,dv_ydt,dzdt,dv_zdt
 
-x0=0
+x0=1
 v_x0=0
 
 y0=0
-v_y0=0
+v_y0=1
 
-z0=3
+z0=0
 v_z0=0
 
 s0=(x0,v_x0,y0,v_y0,z0,v_z0)
-sol=odeint(func,s0,t)
+#Рисование плоскости
+
+
+
+
+sol=odeint(difu,s0,t)
 
 fig=plt.figure()
 ax=p3.Axes3D(fig)
@@ -51,6 +53,16 @@ def anim(i):
     line.set_3d_properties(sol[:i,4])
     
 ani=animation.FuncAnimation(fig,anim,N,interval=50)
+
+y=np.linspace(0,np.pi,100)
+F=np.linspace(0,-np.pi,100)
+R=1
+
+x=R*np.outer(np.ones(np.size(t)), np.cos(F))
+y=np.outer(t, np.ones(np.size(F)))
+z=R*np.outer(np.ones(np.size(t)), np.sin(F))
+ax.plot_surface(x,y,z, color='g')
+
 plt.show()
 
-ani.save('hdfjh.gif')
+ani.save('DICH.gif')
